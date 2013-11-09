@@ -363,6 +363,34 @@ static int wpa_driver_wired_get_capa(void *priv, struct wpa_driver_capa *capa)
        return 0;
 }
 
+#ifdef ANDROID
+int wpa_driver_wired_driver_cmd( void *priv, char *cmd, char *buf, size_t buf_len )
+{
+    struct wpa_driver_test_data *drv = (struct wpa_driver_test_data *)priv;
+    int ret = -1;
+
+    wpa_printf(MSG_ERROR, "%s %s", __func__, cmd);
+    if( os_strncasecmp(cmd, "start", 5) == 0 ) {
+        wpa_printf(MSG_DEBUG,"Start command");
+        ret = 0;
+    }
+    else if( os_strncasecmp(cmd, "stop", 4) == 0 ) {
+        wpa_printf(MSG_DEBUG,"Stop command");
+        ret = 0;
+    }
+    else if( os_strncasecmp(cmd, "rssi", 4) == 0 ) {
+        wpa_printf(MSG_DEBUG,"RSSI command");
+        ret = os_snprintf(buf, buf_len, "%s rssi %d\n", DRIVER_CONFIG_FAKE_SSID, -55);
+    } else if ( os_strncasecmp(cmd, "rssi-approx", 4) == 0) {
+        wpa_printf(MSG_DEBUG,"RSSI-APPROX command");
+        ret = os_snprintf(buf, buf_len, "%s rssi %d\n", DRIVER_CONFIG_FAKE_SSID, -55);
+    } else if (os_strncasecmp(cmd, "linkspeed", 9) == 0) {
+        wpa_printf(MSG_DEBUG, "LinkSpeed command");
+        ret = os_snprintf(buf, buf_len, "LinkSpeed %u\n", 11);
+    }
+    return ret;
+}
+#endif
 const struct wpa_driver_ops wpa_driver_wired_ops = {
 	.name = "wired",
 	.desc = "wpa_supplicant wired Ethernet driver",
@@ -375,4 +403,7 @@ const struct wpa_driver_ops wpa_driver_wired_ops = {
         .disassociate = wpa_driver_wired_disassociate,
         .associate = wpa_driver_wired_associate,
         .get_capa = wpa_driver_wired_get_capa,
+#ifdef ANDROID
+        .driver_cmd = wpa_driver_wired_driver_cmd
+#endif
 };
