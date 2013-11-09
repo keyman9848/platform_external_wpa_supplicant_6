@@ -369,7 +369,7 @@ int wpa_driver_wired_driver_cmd( void *priv, char *cmd, char *buf, size_t buf_le
     struct wpa_driver_test_data *drv = (struct wpa_driver_test_data *)priv;
     int ret = -1;
 
-    wpa_printf(MSG_ERROR, "%s %s", __func__, cmd);
+    wpa_printf(MSG_DEBUG, "%s %s", __func__, cmd);
     if( os_strncasecmp(cmd, "start", 5) == 0 ) {
         wpa_printf(MSG_DEBUG,"Start command");
         ret = 0;
